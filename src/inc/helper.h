@@ -1,7 +1,11 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-#include <python3.12/Python.h>
+#ifndef _WIN32
+    #include <python3.12/Python.h>
+#else
+    #include <python3.11/Python.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 
