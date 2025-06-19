@@ -1,4 +1,7 @@
 #include "inc/func.h"
+#ifdef _WIN32
+    #include "inc/helper.h"
+#endif
 
 static PyMethodDef methods[] = {
     {"quaks", duck3d, METH_VARARGS, "print's ducks"},
