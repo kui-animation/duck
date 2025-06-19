@@ -6,6 +6,7 @@
 static PyMethodDef methods[] = {
     {"quaks", duck3d, METH_VARARGS, "print's ducks"},
     {"eat", eat, METH_NOARGS, "clears the terminal"},
+    {"grab", creatPoins, METH_VARARGS, "somting"},
     {"winter", pose, METH_VARARGS, "sleep in miliseconds"},
     {NULL, NULL, 0, NULL}
 };

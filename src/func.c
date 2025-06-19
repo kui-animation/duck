@@ -3,11 +3,80 @@
 #define MILISECOND 1000
 #define PI 3.14159265359
 
+
+PyObject* creatPoins(PyObject* self, PyObject* args) {
+    char *name;
+    int v_amount = 2;
+    if (!PyArg_ParseTuple(args, "s", &name)) {
+        return NULL;
+    }
+    char *line = malloc(255*sizeof(char));
+    if (!line) {
+        PyErr_SetString(PyExc_MemoryError, "Couldn't allocate memory for line");
+        return NULL;
+    }
+    float *v = malloc(v_amount*3*sizeof(float));
+    if (!v) {
+        free(line);
+        PyErr_SetString(PyExc_MemoryError, "Couldn't allocate memory for v");
+        return NULL;
+    }
+    FILE *obj = fopen(name, "r");
+    if (!obj) {
+        free(v);
+        free(line);
+        PyErr_SetString(PyExc_FileExistsError, "Couldn't open file");
+        return NULL;
+    }
+
+
+    int line_number = 0;
+    while (fgets(line, 255, obj)) {
+        if (line_number >= v_amount) {
+            v_amount = line_number+2;
+            float *tmp_v = realloc(v, v_amount*3*sizeof(float));
+            if (!tmp_v) {
+                free(v);
+                free(line);
+                fclose(obj);
+                PyErr_SetString(PyExc_MemoryError, "Couldn't allocate memory for tmp_v");
+                return NULL;
+            }
+            v = tmp_v;
+        }
+        float x, y, z;
+        if (line[0] != 'v') {
+            continue;
+        }
+        line[0] = ' ';
+        if (sscanf(line, "%f %f %f", &x, &y, &z) != 3) {
+            continue; // skip invalid lines
+        }
+        v[line_number * 3 + 0] = x;
+        v[line_number * 3 + 1] = y;
+        v[line_number * 3 + 2] = z;
+
+        line_number ++;
+    }
+
+    PyObject* list = PyList_New(line_number*3);
+    for (int i = 0; i < line_number*3; i++) {
+        PyList_SetItem(list, i, PyLong_FromLong(v[i]));
+    }
+
+    free(v);
+    free(line);
+    fclose(obj);
+
+    return list;
+}
+
+
 PyObject* duck3d(PyObject* self, PyObject* args) {
 
     PyObject* list;
-
-    if (!PyArg_ParseTuple(args, "O", &list)) {
+    float angle = 43.5;
+    if (!PyArg_ParseTuple(args, "O|f", &list, &angle)) {
         return NULL;
     }
 
@@ -34,13 +103,13 @@ PyObject* duck3d(PyObject* self, PyObject* args) {
         free(x);
         return NULL;
     }
-    float angle = 43.5*(PI/180.0);
+    float r_angle = angle*(PI/180.0);
     for (int i = 0; i < len; i++) {
         int tmp_x = PyLong_AsLong(PyList_GetItem(list, i*3));
         int tmp_y = PyLong_AsLong(PyList_GetItem(list, i*3+1));
         int z = PyLong_AsLong(PyList_GetItem(list, i*3+2));
-        x[i] = tmp_x + 1/2.0*z*cos(angle);
-        y[i] = tmp_y + 1/2.0*z*sin(angle);
+        x[i] = tmp_x + 1/2.0*z*cos(r_angle);
+        y[i] = tmp_y + 1/2.0*z*sin(r_angle);
     }
 
     

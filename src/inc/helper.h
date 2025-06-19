@@ -10,6 +10,7 @@
 #endif
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 void set_x_and_y (int x, int y);
 void draw_duck(int s, int y);

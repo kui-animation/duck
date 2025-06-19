@@ -1,25 +1,17 @@
 import duck
 
-t = 11
-y = 3
+t = 10
+y = 5
+h = 15
+a = -43.5
+max_a = -a
 
-x = [
+x = duck.grab("test.obj")
 
-        8, y,-3,
-        16,y,0,
-        0,y,0,
-
-        8,y,t+3,
-        0,y,t,
-        16,y,t
-    ]
-
-while y < 15:
+duck.eat()
+duck.winter(500)
+while a < max_a:
     duck.eat()
-    print("\x1B[07;00fduck")
-
-    duck.quaks(x)
-    duck.winter(500)
-    for i in range(1,18,3):
-        x[i] = y
-    y += 1    
+    duck.quaks(x, a)
+    duck.winter(5)
+    a += 0.5
