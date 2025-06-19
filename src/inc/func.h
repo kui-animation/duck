@@ -9,8 +9,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-PyObject* say(PyObject* self, PyObject* noargs);
-PyObject* duck(PyObject* self, PyObject* args);
-PyObject* eat(PyObject* self, PyObject* noargs);
+PyObject* say (PyObject* self, PyObject* noargs);
+PyObject* duck2d (PyObject* self, PyObject* args);
+PyObject* duck3d(PyObject* self, PyObject* args);
+PyObject* eat (PyObject* self, PyObject* noargs);
+PyObject* pose (PyObject* self, PyObject* args);
 
 #endif

@@ -1,17 +1,13 @@
 #include "inc/func.h"
 #include "inc/helper.h"
+#define MILISECOND 1000
+#define PI 3.14159265359
 
-PyObject* say(PyObject* self, PyObject* noargs) {
-    PySys_WriteStdout("quck\n");
-    Py_RETURN_NONE;
-}
-
-PyObject* duck(PyObject* self, PyObject* args) {
+PyObject* duck3d(PyObject* self, PyObject* args) {
 
     PyObject* list;
-    int flag;
 
-    if (!PyArg_ParseTuple(args, "Op", &list, &flag)) {
+    if (!PyArg_ParseTuple(args, "O", &list)) {
         return NULL;
     }
 
@@ -21,57 +17,40 @@ PyObject* duck(PyObject* self, PyObject* args) {
     }
 
     Py_ssize_t true_len = PyList_Size(list);
-    if (true_len % 2 != 0) {
+    if (true_len % 3 != 0) {
         PyErr_SetString(PyExc_ValueError, "List must be divadeble by 2");
         return NULL;
     }
 
-    int len = true_len/2;
+    int len = true_len/3;
     int *x = malloc(len * sizeof(int));
+    if (!x) {
+        PyErr_SetString(PyExc_MemoryError, "Couldn't allocate memory for x");
+        return NULL;
+    }
     int *y = malloc(len * sizeof(int));
+    if (!y) {
+        PyErr_SetString(PyExc_MemoryError, "Couldn't allocate memory for y");
+        free(x);
+        return NULL;
+    }
+    float angle = 43.5*(PI/180.0);
     for (int i = 0; i < len; i++) {
-        x[i] = PyLong_AsLong(PyList_GetItem(list, i*2));
-        y[i] = PyLong_AsLong(PyList_GetItem(list, i*2+1));
+        int tmp_x = PyLong_AsLong(PyList_GetItem(list, i*3));
+        int tmp_y = PyLong_AsLong(PyList_GetItem(list, i*3+1));
+        int z = PyLong_AsLong(PyList_GetItem(list, i*3+2));
+        x[i] = tmp_x + 1/2.0*z*cos(angle);
+        y[i] = tmp_y + 1/2.0*z*sin(angle);
     }
 
-    for (int k = 0; k < len; k++) {
-        int tmp_index = k;
-        for (int l = k; l < len; l++) {
-            if (y[l] < y[tmp_index]) {
-                tmp_index = l;
-            }
-        }
-        swop(&y[k], &y[tmp_index]);
-        swop(&x[k], &x[tmp_index]);
-    }
-
-
-    int *d = malloc(len * sizeof(int));
-    for (int j = 0; j < len; j++) {
-        if (j > 0) {
-            d[j] = abs(y[j-1] - y[j]);
-        } else {
-            d[j] = abs(y[j]+1);
-        }
-    }
-
-    for (int o = 0; o < len; o++) {
-        set_y(d[o]-1);
-        if (flag) {
-            draw_duck(x[o]);
-        } else {
-            set_x(x[o]);
-            PySys_WriteStdout("#\n");
-        }
-    }
-    PySys_WriteStdout("\n");
+    
+    draw (x, y, len);
     free(x);
     free(y);
-    free(d);
     Py_RETURN_NONE;
 }
 
-PyObject* eat(PyObject* self, PyObject* noargs) {
+PyObject* eat (PyObject* self, PyObject* noargs) {
     #ifndef _WIN32
         int _ = system("clear");
     #else
@@ -81,3 +60,11 @@ PyObject* eat(PyObject* self, PyObject* noargs) {
     Py_RETURN_NONE;
 }
 
+PyObject* pose (PyObject* self, PyObject* args) {
+
+    int seconds;
+    if(PyArg_ParseTuple(args, "i", &seconds))
+
+    usleep(MILISECOND*seconds);
+    Py_RETURN_NONE;
+}

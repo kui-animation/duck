@@ -1,9 +1,9 @@
 #include "inc/func.h"
 
 static PyMethodDef methods[] = {
-    {"say", say, METH_NOARGS, "print a ducks mesige"},
-    {"list", duck, METH_VARARGS, "print the duck"},
-    {"eat", eat, METH_NOARGS, "print the duck"},
+    {"quaks", duck3d, METH_VARARGS, "print's ducks"},
+    {"eat", eat, METH_NOARGS, "clears the terminal"},
+    {"winter", pose, METH_VARARGS, "sleep in miliseconds"},
     {NULL, NULL, 0, NULL}
 };
 
@@ -16,6 +16,9 @@ static struct PyModuleDef module = {
 };
 
 PyMODINIT_FUNC PyInit_duck(void) {
+    #ifdef _WIN32
+        enable_ansi_escape_sequences();
+    #endif
     return PyModule_Create(&module);
 }
 
